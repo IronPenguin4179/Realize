@@ -11,6 +11,8 @@ class Rectangle:
         self.x2 = self.x1+(def_x2-def_x1)
         print(self.x1, self.x2)
 
+class Thing:
+    pass
 rect = Rectangle()
 rect.create()
 rect.create()
