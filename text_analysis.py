@@ -20,7 +20,7 @@ class Realize:
         line_number = 1
         for line in self.data_arr:
             if line.lstrip()[0:6] == "class ":
-                print(line_number, line)
+                #print(line_number, line)
                 class_name = line.strip()[6:-1]
                 self.add_class(class_name, line_number)
             line_number += 1
@@ -36,9 +36,20 @@ class Class_obj(Realize):
         self.class_instances = {} #Format { "instance_name":line_created}
 
     def find_methods(self): 
+        print(self.class_name)
+        index = self.start_line_number
         for line in self.class_lines:
-            pass
+            if line.strip()[0:3] == "def":
+                parentheses = line.strip().index("(")
+                self.method_calls[line.strip()[4:parentheses]] = []
+                print(self.method_calls)
 
+    def find_class_instances(self):
+        line_number = 1
+        for line in FILE_NO_WHT:
+            if line.find(self.class_name) != -1 and line.lstrip()[0:6] != "class ":
+                print("Instance found at ",line_number)
+            line_number += 1
 
 #Takes a line and the last line's indent level and outputs line type and it's indent level.
 #Used for finding if a line is part of a previous class/function or starting other component.
@@ -64,17 +75,20 @@ def check_indent(line, previous_indent_level=0):
 
         return indent_level, line_type
 
-#Used for finding where a class/method ends. Line number is last used line, not whitespace.
+#Iterates through lines in file to find where class ends. 
+#Takes array of lines from file and the line number where the class begins.
+#Returns the number of the last line in the class
 def find_last_line(file, start_line_number):
     start_indent_level = check_indent(file[start_line_number-1])#line number is index+1
-    line_number = start_line_number
+    line_number = start_line_number-1
     indent_level = 0
     line_type = None
     while line_type != "zeroed" and line_number <= len(file):
-        indent_level, line_type = check_indent(file[line_number-1], indent_level)
-        print("Line ",line_number, " is ",line_type, " to ",indent_level)
         line_number += 1
-        
+        indent_level, line_type = check_indent(file[line_number-1], indent_level)
+    else:
+        line_number -= 1
+        #print("Ends at line number: ",line_number)
     return line_number
 
 def main():
@@ -82,10 +96,7 @@ def main():
     realize.find_classes()
     for classy in realize.classes_dict:
         realize.classes_dict[classy][1].find_methods()
-    #print(realize.classes_dict)
-    #print(realize.classes_dict["Rectangle"][1].end_line_number)
+        realize.classes_dict[classy][1].find_class_instances()
 #######################################
 if __name__ == "__main__":
     main()
-
-#print(check_indent(FILE[6],2))
