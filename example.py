@@ -13,6 +13,7 @@ class Rectangle:
 
 class Thing:
     pass
+
 rect = Rectangle()
 rect.create()
 rect.create()
