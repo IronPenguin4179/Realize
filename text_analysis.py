@@ -1,14 +1,9 @@
-with open('example.py', 'r') as f:
-    FILE = f.readlines()
-    FILE_NO_WHT = []
-    for line in FILE:
-        if not line.isspace():
-            FILE_NO_WHT.append(line)
-
 class Realize:
     classes_dict = {} #Class_name => [index,obj]
+    data_arr = []
     def __init__(self, file):
-        self.data_arr = file
+        global data_arr 
+        data_arr = file.copy()
 
     def add_class(self, class_name, line_number):
         class_obj = Class_obj(class_name, line_number )
@@ -18,7 +13,7 @@ class Realize:
     #add it to the classes dictionary and record the index in realize.
     def find_classes(self):
         line_number = 1
-        for line in self.data_arr:
+        for line in Realize.data_arr:
             if line.lstrip()[0:6] == "class ":
                 #print(line_number, line)
                 class_name = line.strip()[6:-1]
@@ -30,8 +25,8 @@ class Class_obj(Realize):
     def __init__(self, name, start_line_number):
         self.class_name = name
         self.start_line_number = start_line_number
-        self.end_line_number = find_last_line(FILE_NO_WHT, start_line_number)
-        self.class_lines = FILE_NO_WHT[self.start_line_number:self.end_line_number]
+        self.end_line_number = find_last_line(Realize.data_arr, start_line_number)
+        self.class_lines = Realize.data_arr[self.start_line_number:self.end_line_number]
         self.method_calls = {} #Format { "method_name":[[line_called, instance_name]] }
         self.class_instances = {} #Format { "instance_name":line_created}
 
@@ -46,7 +41,7 @@ class Class_obj(Realize):
 
     def find_class_instances(self):
         line_number = 1
-        for line in FILE_NO_WHT:
+        for line in Realize.data_arr:
             if line.find(self.class_name) != -1 and line.lstrip()[0:6] != "class ":
                 print("Instance found at ",line_number)
             line_number += 1
@@ -90,13 +85,3 @@ def find_last_line(file, start_line_number):
         line_number -= 1
         #print("Ends at line number: ",line_number)
     return line_number
-
-def main():
-    realize = Realize(FILE_NO_WHT)
-    realize.find_classes()
-    for classy in realize.classes_dict:
-        realize.classes_dict[classy][1].find_methods()
-        realize.classes_dict[classy][1].find_class_instances()
-#######################################
-if __name__ == "__main__":
-    main()
