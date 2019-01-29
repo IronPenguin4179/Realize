@@ -1,22 +1,21 @@
 class Realize:
     def __init__(self, file):
         self.data_arr = file.copy()
-
-    def get_file(self):
-        return self.data_arr
+        self.classes_dict = {}
 
     def get_dict(self):
         return self.classes_dict
 
     def add_class(self, class_name, line_number):
-        class_obj = Class_obj(class_name, line_number )
+        class_obj = Class_obj(class_name, line_number, self.data_arr)
         self.classes_dict[class_name] = [line_number, class_obj]
 
     #Scans the file to find where the class declarations are, make them a class_object,
     #add it to the classes dictionary and record the index in realize.
     def find_classes(self):
         line_number = 1
-        for line in Realize.data_arr:
+        data = self.data_arr
+        for line in data:
             if line.lstrip()[0:6] == "class ":
                 #print(line_number, line)
                 class_name = line.strip()[6:-1]
@@ -25,11 +24,12 @@ class Realize:
 
 
 class Class_obj(Realize):
-    def __init__(self, name, start_line_number):
+    def __init__(self, name, start_line_number, file):
         self.class_name = name
+        self.data = file.copy()
         self.start_line_number = start_line_number
-        self.end_line_number = find_last_line(Realize.data_arr, start_line_number)
-        self.class_lines = Realize.data_arr[self.start_line_number:self.end_line_number]
+        self.end_line_number = find_last_line(self.data, start_line_number)
+        self.class_lines = self.data[self.start_line_number:self.end_line_number]
         self.method_calls = {} #Format { "method_name":[[line_called, instance_name]] }
         self.class_instances = {} #Format { "instance_name":line_created}
 
@@ -44,9 +44,10 @@ class Class_obj(Realize):
 
     def find_class_instances(self):
         line_number = 1
-        for line in Realize.data_arr:
+        data = self.data
+        for line in data:
             if line.find(self.class_name) != -1 and line.lstrip()[0:6] != "class ":
-                print("Instance found at ",line_number)
+                print("Instance found at",line_number)
             line_number += 1
 
 
