@@ -1,9 +1,12 @@
 class Realize:
-    classes_dict = {} #Class_name => [index,obj]
-    data_arr = [] #file
     def __init__(self, file):
-        global data_arr 
-        data_arr = file.copy()
+        self.data_arr = file.copy()
+
+    def get_file(self):
+        return self.data_arr
+
+    def get_dict(self):
+        return self.classes_dict
 
     def add_class(self, class_name, line_number):
         class_obj = Class_obj(class_name, line_number )
@@ -34,7 +37,7 @@ class Class_obj(Realize):
         print(self.class_name)
         index = self.start_line_number
         for line in self.class_lines:
-            if line.strip()[0:3] == "def":
+            if line.strip()[0:3] == "def ":
                 parentheses = line.strip().index("(")
                 self.method_calls[line.strip()[4:parentheses]] = []
                 print(self.method_calls)
