@@ -15,7 +15,7 @@
 from text_analysis import Realize
 
 #Opens file lines into an array and removes the white space gaps between lines.
-with open('example.py', 'r') as f:
+with open('example_files/example.py', 'r') as f:
     FILE = f.readlines()
     file_no_wht = []
     for line in FILE:
