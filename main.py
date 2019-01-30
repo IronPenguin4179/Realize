@@ -13,7 +13,7 @@
     # Function Variable Definitions
 
 from text_analysis import Realize
-
+from make_rects import *
 #Opens file lines into an array and removes the white space gaps between lines.
 with open('example_files/example.py', 'r') as f:
     FILE = f.readlines()
@@ -29,6 +29,9 @@ def main():
     for classy in realize.classes_dict:
         realize.classes_dict[classy][1].find_methods()
         realize.classes_dict[classy][1].find_class_instances()
+    
+    gui = Gui_class(root,realize.classes_dict)
+    root.mainloop()
 
 #-----------------------------------------------------------------------
 # PROGRAM'S MAIN LOGIC
