@@ -1,23 +1,27 @@
 from tkinter import *
 
 root = Tk()
+root.configure(background="black")
 
 class Gui_class():
-    def __init__(self, master,obj):
+    def __init__(self, master, classes):
         self.master = master
-        self.obj = obj.copy()
-        self.leftFrame = Frame(master, width=540, height=400, background="bisque")
-        self.rightFrame = Frame(master, width=100, height=350, background="#b22222")
-        self.leftFrame.grid(column=0,row=0)
-        self.rightFrame.grid(column=1,row=0)
+        self.classes = classes.copy()
 
-        self.master.grid_rowconfigure(1, weight=1)
-        self.master.grid_columnconfigure(0, weight=1)
+        self.header = Label(bg="red", width=100)
+        self.header.grid(columnspan=5, row=0, column=0)
 
-        self.label2 = Frame(self.rightFrame, width=100,height=100,bg="green")
-        self.label2.grid(row=0,sticky="n")
-        self.button = Button(self.rightFrame,text="Classes",command=self.showClasses)
-        self.button.grid(row=1)
+        #self.file_menu = Menu(master, text="File")
+        #self.file_menu.grid(row=0,column=0)
+
+        self.side_panel = Frame(master,height=200,bg="green")
+        self.side_panel.grid(column=4,row=1,rowspan=10,sticky="nsew")
+        self.button = Button(master,text="Classes",command=self.showClasses)
+        self.button.grid(column=4,row=1,sticky="ew")
 
     def showClasses(self):
-        print(self.obj)
+        i = 1
+        for classy in self.classes:
+            self.class_label = Label(self.master,text=classy)
+            self.class_label.grid(column=0,row=i,sticky="nsew",pady=3)
+            i+=1

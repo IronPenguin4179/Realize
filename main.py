@@ -13,7 +13,7 @@
     # Function Variable Definitions
 
 from text_analysis import Realize
-from make_rects import *
+from tkinter_draw import *
 #Opens file lines into an array and removes the white space gaps between lines.
 with open('example_files/example.py', 'r') as f:
     FILE = f.readlines()
