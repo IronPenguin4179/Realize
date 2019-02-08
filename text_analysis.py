@@ -30,7 +30,7 @@ class Class_obj(Realize):
         self.class_name = name
         self.data = file.copy()
         self.start_line_number = start_line_number
-        self.end_line_number = find_last_line(self.data, start_line_number)
+        self.end_line_number = self.find_last_line(self.data, start_line_number)
         self.class_lines = self.data[self.start_line_number:self.end_line_number]
         self.method_calls = {} #Format { "method_name":[[line_called, instance_name]] }
         self.class_instances = {} #Format { "instance_name":line_created}
@@ -53,44 +53,45 @@ class Class_obj(Realize):
             line_number += 1
 
 
-#Takes a line and the last line's indent level and outputs line type and it's indent level.
-#Used for finding if a line is part of a previous class/function or starting other component.
-def check_indent(line, previous_indent_level=0):
-    line_type = None
-    left_spaces = len(line.rstrip())-len(line.strip())
-    indent_level = int(left_spaces/4)
+    #Takes a line and the last line's indent level and outputs line type and it's indent level.
+    #Used for finding if a line is part of a previous class/function or starting other component.
+    @staticmethod
+    def check_indent(line, previous_indent_level=0):
+        line_type = None
+        left_spaces = len(line.rstrip())-len(line.strip())
+        indent_level = int(left_spaces/4)
 
-    if indent_level == previous_indent_level:
-        line_type = "same"
-    elif line.isspace():
-        line_type = "blank"
-        indent_level = previous_indent_level
-    elif indent_level == 0:
-        line_type = "zeroed"
-    elif indent_level == previous_indent_level+1:
-        line_type = "increase"
-    elif indent_level == previous_indent_level-1:
-        line_type = "decrease"
-    else:
-        line_type = "other"
-        indent_level = previous_indent_level
+        if indent_level == previous_indent_level:
+            line_type = "same"
+        elif line.isspace():
+            line_type = "blank"
+            indent_level = previous_indent_level
+        elif indent_level == 0:
+            line_type = "zeroed"
+        elif indent_level == previous_indent_level+1:
+            line_type = "increase"
+        elif indent_level == previous_indent_level-1:
+            line_type = "decrease"
+        else:
+            line_type = "other"
+            indent_level = previous_indent_level
 
-    return indent_level, line_type
+        return indent_level, line_type
 
-#Iterates through lines in file to find where class ends. 
-#Takes array of lines from file and the line number where the class begins.
-#Returns the number of the last line in the class
-def find_last_line(file, start_line_number):
-    line_number = start_line_number-1
-    start_indent_level = check_indent(file[line_number])#line number is index+1
-    indent_level = 0
-    line_type = None
-    while line_type != "zeroed" and line_number <= len(file):
-        line_number += 1
-        indent_level, line_type = check_indent(file[line_number-1], indent_level)
-    else:
-        line_number -= 1
-        #print("Ends at line number: ",line_number)
-    return line_number
+    #Iterates through lines in file to find where class ends. 
+    #Takes array of lines from file and the line number where the class begins.
+    #Returns the number of the last line in the class
+    def find_last_line(self, file, start_line_number):
+        line_number = start_line_number-1
+        start_indent_level = self.check_indent(file[line_number])#line number is index+1
+        indent_level = 0
+        line_type = None
+        while line_type != "zeroed" and line_number <= len(file):
+            line_number += 1
+            indent_level, line_type = self.check_indent(file[line_number-1], indent_level)
+        else:
+            line_number -= 1
+            #print("Ends at line number: ",line_number)
+        return line_number
 
 #parents and children
