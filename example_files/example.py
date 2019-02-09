@@ -1,3 +1,7 @@
+import one from class_imports
+from class_imports import two
+import class_imports
+
 class Rectangle:
     def __init__(self):
         self.x1 = def_x1

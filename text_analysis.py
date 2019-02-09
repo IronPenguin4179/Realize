@@ -1,9 +1,51 @@
 class Realize:
-    classes_dict = {} #Class_name => [index,obj]
-    data_arr = [] #file
     def __init__(self, file):
         self.data_arr = file.copy()
+        self.imported_files_dict = {}
         self.classes_dict = {}
+
+    def find_imports(self):
+        data = self.data_arr
+        imports = []
+        for line in data:
+            liner = line.lstrip()
+            if liner[0:7] == "import ":
+                imports.append(line.strip())
+            elif liner[0:5] == "from ":
+                imports.append(line.strip())
+        return imports                
+
+    def scan_imports(self):
+        #Scans through import statements to find what classes to import and files
+        #to import from.
+        #Adds information to self.file_imports dict {"file_name":"class_name"}
+        list_of_imports = self.find_imports()
+        self.file_imports = {}
+        for item in list_of_imports:
+            index_of_from = item.find("from ")
+            index_of_import = item.find("import ")
+            item_length = len(item)
+            from_length = len("from ")
+            import_length = len("import ")
+
+            if index_of_from == 0:
+                name_of_class = item[index_of_import+import_length:item_length+1]
+            
+                file_index = index_of_from + from_length
+                file_name = item[file_index:index_of_import]
+                #print(name_of_class, "in from first. File:",file_name)
+            elif index_of_from == -1:
+                name_of_class = "*"
+                file_name = item[import_length:item_length+1]
+                #print(name_of_class,"in no from. File:",file_name)
+            else:
+                name_of_class = item[import_length:index_of_from-1]
+            
+                file_index = index_of_from + from_length
+                file_name = item[file_index:item_length+1]
+                #print(name_of_class, "in import first. File:",file_name)
+            self.file_imports[file_name] = name_of_class
+
 
     def get_dict(self):
         return self.classes_dict
@@ -25,7 +67,7 @@ class Realize:
             line_number += 1
 
 
-class Class_obj(Realize):
+class Class_obj:
     def __init__(self, name, start_line_number, file):
         self.class_name = name
         self.data = file.copy()
@@ -36,13 +78,13 @@ class Class_obj(Realize):
         self.class_instances = {} #Format { "instance_name":line_created}
 
     def find_methods(self): 
-        print(self.class_name)
+        #print(self.class_name)
         index = self.start_line_number
         for line in self.class_lines:
             if line.strip()[0:3] == "def":
                 parentheses = line.strip().index("(")
                 self.method_calls[line.strip()[4:parentheses]] = []
-                print(self.method_calls)
+                #print(self.method_calls)
 
     def find_class_instances(self):
         line_number = 1
