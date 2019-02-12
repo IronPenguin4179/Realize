@@ -26,6 +26,7 @@ with open('example_files/example.py', 'r') as f:
 def main():
     realize = Realize(FILE_NO_WHT)
     realize.find_classes()
+    realize.scan_imports()
     for classy in realize.classes_dict:
         realize.classes_dict[classy][1].find_methods()
         realize.classes_dict[classy][1].find_class_instances()
