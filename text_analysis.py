@@ -77,15 +77,17 @@ class Class_obj:
         self.method_calls = {} #Format { "method_name":[[line_called, instance_name]] }
         self.class_instances = {} #Format { "instance_name":line_created}
 
+    #Unfinished
     def find_methods(self): 
         #print(self.class_name)
         index = self.start_line_number
         for line in self.class_lines:
-            if line.strip()[0:3] == "def":
+            if line.strip()[0:4] == "def ":
                 parentheses = line.strip().index("(")
                 self.method_calls[line.strip()[4:parentheses]] = []
                 #print(self.method_calls)
 
+    #Unfinished
     def find_class_instances(self):
         line_number = 1
         data = self.data
