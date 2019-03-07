@@ -1,3 +1,4 @@
+#Display class info to show file name
 from os import path
 from tkinter import *
 from tkinter import filedialog
@@ -71,7 +72,7 @@ class Gui_class():
 
     def showClasses(self):
         i = 1
-        for classy in self.classes:
+        for classy in self.realize_classes:
             self.class_label = Label(self.left_frame,text=classy)
             self.class_label.grid(column=0,row=i,sticky="nsew",pady=3)
             i+=1
@@ -83,44 +84,52 @@ class Gui_class():
         file_pick = filedialog.askopenfilename(initialdir= path.dirname(__file__))
         
         with open(file_pick, 'r') as f:
-            FILE = f.readlines()
-            file_no_wht = []
-            for line in FILE:
-                if not line.isspace():
-                    file_no_wht.append(line)
-            FILE_NO_WHT = file_no_wht.copy()
-        self.file = FILE_NO_WHT
+            self.file = remove_file_whitelines(f)
         self.realize_file()
 
     def realize_file(self):
         self.realize = Realize(self.file)
-        self.realize.find_imports()
-        self.realize.scan_imports()
+        self.realize.find_import_names()
         self.realize.find_classes()
         for classy in self.realize.classes_dict:
             self.realize.classes_dict[classy][1].find_methods()
             self.realize.classes_dict[classy][1].find_class_instances()
-        #print(self.realize.classes_dict)
+        print(self.realize.classes_dict)
+        for imps in self.realize.imported_files_dict:
+            print(imps)
+        self.realize_classes = self.realize.classes_dict
 
     def displayClassInfo(self):
         frame = self.left_frame
         self.class_label = Label(frame, text=self.entry.get())
         exists = False
-        for item in self.classes:
-            if item == self.entry.get():
+        name_of_class = self.entry.get()
+        for item in self.realize_classes:
+            if item == name_of_class:
                 exists = True
         if exists:
-            self.class_label = Label(frame, text=self.entry.get())
+            obj = self.realize.classes_dict[name_of_class]
+            class_info = "You can find this class on line "+str(obj[0])+" of "+str(self.realize.imported_files_dict)
+            self.class_name_label = Label(frame, text=obj[1].class_name)
+            self.class_info_label = Label(frame, text=class_info)
         else:
-            self.class_label = Label(frame, text="Entry not found.")
-        #self.class_label.grid(column=0,row=1,sticky="nwes")
-        self.class_label.pack()
+            self.class_name_label = Label(frame, text="Entry not found.")
+        self.class_name_label.pack()
+        self.class_info_label.pack()
 
 
     def run(self):
         self.main_frames()
         self.header()
         self.sidebar()
+
+def remove_file_whitelines(file):
+    f = file.readlines()
+    file_no_wht = []
+    for line in f:
+        if not line.isspace():
+            file_no_wht.append(line)
+    return file_no_wht
 
 new = Gui_class(root)
 new.run()

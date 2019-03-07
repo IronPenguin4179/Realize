@@ -4,7 +4,7 @@ class Realize:
         self.imported_files_dict = {}
         self.classes_dict = {}
 
-    def find_imports(self):
+    def find_import_statements(self):
         data = self.data_arr
         imports = []
         for line in data:
@@ -13,14 +13,14 @@ class Realize:
                 imports.append(line.strip())
             elif liner[0:5] == "from ":
                 imports.append(line.strip())
-        return imports                
+        return imports
 
-    def scan_imports(self):
+    def find_import_names(self):
         #Scans through import statements to find what classes to import and files
         #to import from.
         #Adds information to self.file_imports dict {"file_name":"class_name"}
-        list_of_imports = self.find_imports()
-        self.file_imports = {}
+        list_of_imports = self.find_import_statements()
+        self.import_file_names = {}
         for item in list_of_imports:
             index_of_from = item.find("from ")
             index_of_import = item.find("import ")
@@ -44,7 +44,7 @@ class Realize:
                 file_index = index_of_from + from_length
                 file_name = item[file_index:item_length+1]
                 #print(name_of_class, "in import first. File:",file_name)
-            self.file_imports[file_name] = name_of_class
+            self.imported_files_dict[file_name] = name_of_class
 
 
     def get_dict(self):
@@ -137,5 +137,3 @@ class Class_obj:
             line_number -= 1
             #print("Ends at line number: ",line_number)
         return line_number
-
-#parents and children
