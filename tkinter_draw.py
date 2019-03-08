@@ -5,19 +5,29 @@ from tkinter import filedialog
 from text_analysis import Realize
 
 root = Tk()
+<<<<<<< HEAD
 root.geometry("400x300")
+=======
+root.geometry("800x600")
+>>>>>>> master
 root.configure(background="grey")
 root.title("Realize")
 root.grid_columnconfigure(0, weight=3)
 root.grid_columnconfigure(1, weight=1)
 root.grid_rowconfigure(0,weight=1)
+<<<<<<< HEAD
 #root.grid_columnconfigure(2, weight=1)
 #root.grid_columnconfigure(3, weight=2)
+=======
+>>>>>>> master
 
 class Gui_class():
     def __init__(self, master):
         self.master = master
+<<<<<<< HEAD
         #self.classes = classes.copy()
+=======
+>>>>>>> master
 
     def main_frames(self):
         self.left_frame = Frame(self.master)
@@ -26,6 +36,15 @@ class Gui_class():
         self.left_frame.grid(column=0,row=0,sticky="nsew")
         self.right_frame.grid(column=1,row=0,sticky="nsew")
 
+<<<<<<< HEAD
+=======
+        self.class_name_label = Label(self.left_frame, text="")
+        self.class_file_label = Label(self.left_frame, text="")
+        self.class_line_label = Label(self.left_frame, text="")
+        self.class_methods_label = Label(self.left_frame, text="")
+
+
+>>>>>>> master
     def header(self):
         #Menu header
         self.menu_bar = Menu(self.master)
@@ -53,14 +72,6 @@ class Gui_class():
 
     def sidebar(self):
         frame = self.right_frame
-        #Side panel
-        #self.master.config(menu=self.menu_bar)
-        #self.side_panel = Frame(self.master,height=200,bg="black")
-        #self.side_panel.grid(column=4,row=1,rowspan=10,sticky="nsew")
-
-        #Show classes button
-        #self.show_classes_button = Button(self.master,text="Classes",command=self.showClasses)
-        #self.show_classes_button.grid(column=4,row=1,sticky="ew")
 
         #Entry bar and find button
         self.entry = Entry(frame)
@@ -101,6 +112,7 @@ class Gui_class():
 
     def displayClassInfo(self):
         frame = self.left_frame
+<<<<<<< HEAD
         self.class_label = Label(frame, text=self.entry.get())
         exists = False
         name_of_class = self.entry.get()
@@ -116,6 +128,35 @@ class Gui_class():
             self.class_name_label = Label(frame, text="Entry not found.")
         self.class_name_label.pack()
         self.class_info_label.pack()
+=======
+        class_exists = False
+        name_of_class = self.entry.get()
+
+        if self.class_name_label != None:
+            self.class_name_label.destroy()
+            self.class_file_label.destroy()
+            self.class_line_label.destroy()
+            self.class_methods_label.destroy()
+
+        for item in self.realize_classes:
+            if item == name_of_class:
+                class_exists = True
+        if class_exists:
+            obj = self.realize.classes_dict[name_of_class]
+            self.class_name_label = Label(frame, text="Class name:"+obj[1].class_name)
+            self.class_file_label = Label(frame, text="Line: "+str(obj[0]))
+            self.class_line_label = Label(frame, text="File: "+str(obj[0]))
+            self.class_methods_label = Label(frame, text="Methods: "+str(obj[1].method_calls))
+
+        else:
+            self.class_name_label = Label(frame, text="Entry not found.")
+            self.class_line_label = Label(frame, text="")
+
+        self.class_name_label.pack()
+        self.class_file_label.pack()
+        self.class_line_label.pack()
+        self.class_methods_label.pack()
+>>>>>>> master
 
 
     def run(self):
