@@ -59,10 +59,8 @@ class Gui_class():
 
         #Entry bar and find button
         self.entry = Entry(frame)
-        #self.entry.grid(column=4,row=2,sticky="ew")
         self.entry.pack()
         self.find_it_button = Button(frame,text="Find it!",command=self.displayClassInfo)
-        #self.find_it_button.grid(column=4,row=3,sticky="ew")
         self.find_it_button.pack()
 
     def showClasses(self):
@@ -110,10 +108,14 @@ class Gui_class():
         if class_exists:
             obj = self.realize.classes_dict[name_of_class]
             self.class_name_label = Label(frame, text="Class name:"+obj[1].class_name)
-            self.class_file_label = Label(frame, text="Line: "+str(obj[0]))
-            self.class_line_label = Label(frame, text="File: "+str(obj[0]))
+            self.class_line_label = Label(frame, text="Line: "+str(obj[0]))
+            self.class_file_label = Label(frame, text="")
+            for files in self.realize.imported_files_dict:
+                print(files)
+                for classes in self.realize.imported_files_dict[files]:
+                    if classes == name_of_class:
+                        self.class_file_label = Label(frame, text="File: "+files)
             self.class_methods_label = Label(frame, text="Methods: "+str(obj[1].method_calls))
-
         else:
             self.class_name_label = Label(frame, text="Entry not found.")
             self.class_line_label = Label(frame, text="")
