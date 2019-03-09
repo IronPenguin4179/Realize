@@ -5,29 +5,16 @@ from tkinter import filedialog
 from text_analysis import Realize
 
 root = Tk()
-<<<<<<< HEAD
-root.geometry("400x300")
-=======
 root.geometry("800x600")
->>>>>>> master
 root.configure(background="grey")
 root.title("Realize")
 root.grid_columnconfigure(0, weight=3)
 root.grid_columnconfigure(1, weight=1)
 root.grid_rowconfigure(0,weight=1)
-<<<<<<< HEAD
-#root.grid_columnconfigure(2, weight=1)
-#root.grid_columnconfigure(3, weight=2)
-=======
->>>>>>> master
 
 class Gui_class():
     def __init__(self, master):
         self.master = master
-<<<<<<< HEAD
-        #self.classes = classes.copy()
-=======
->>>>>>> master
 
     def main_frames(self):
         self.left_frame = Frame(self.master)
@@ -36,15 +23,12 @@ class Gui_class():
         self.left_frame.grid(column=0,row=0,sticky="nsew")
         self.right_frame.grid(column=1,row=0,sticky="nsew")
 
-<<<<<<< HEAD
-=======
         self.class_name_label = Label(self.left_frame, text="")
         self.class_file_label = Label(self.left_frame, text="")
         self.class_line_label = Label(self.left_frame, text="")
         self.class_methods_label = Label(self.left_frame, text="")
 
 
->>>>>>> master
     def header(self):
         #Menu header
         self.menu_bar = Menu(self.master)
@@ -96,39 +80,21 @@ class Gui_class():
         
         with open(file_pick, 'r') as f:
             self.file = remove_file_whitelines(f)
-        self.realize_file()
+        self.realize_file(file_pick)
 
-    def realize_file(self):
-        self.realize = Realize(self.file)
-        self.realize.find_import_names()
+    def realize_file(self, file_name):
+        self.realize = Realize(file_name, self.file)
         self.realize.find_classes()
+        self.realize.find_import_names()
         for classy in self.realize.classes_dict:
             self.realize.classes_dict[classy][1].find_methods()
             self.realize.classes_dict[classy][1].find_class_instances()
-        print(self.realize.classes_dict)
         for imps in self.realize.imported_files_dict:
             print(imps)
         self.realize_classes = self.realize.classes_dict
 
     def displayClassInfo(self):
         frame = self.left_frame
-<<<<<<< HEAD
-        self.class_label = Label(frame, text=self.entry.get())
-        exists = False
-        name_of_class = self.entry.get()
-        for item in self.realize_classes:
-            if item == name_of_class:
-                exists = True
-        if exists:
-            obj = self.realize.classes_dict[name_of_class]
-            class_info = "You can find this class on line "+str(obj[0])+" of "+str(self.realize.imported_files_dict)
-            self.class_name_label = Label(frame, text=obj[1].class_name)
-            self.class_info_label = Label(frame, text=class_info)
-        else:
-            self.class_name_label = Label(frame, text="Entry not found.")
-        self.class_name_label.pack()
-        self.class_info_label.pack()
-=======
         class_exists = False
         name_of_class = self.entry.get()
 
@@ -156,7 +122,6 @@ class Gui_class():
         self.class_file_label.pack()
         self.class_line_label.pack()
         self.class_methods_label.pack()
->>>>>>> master
 
 
     def run(self):

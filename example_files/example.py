@@ -1,6 +1,5 @@
-import one from class_imports
-from class_imports import two
-import class_imports
+from class_imports import two, three
+import helper_classes
 
 class Rectangle:
     def __init__(self):

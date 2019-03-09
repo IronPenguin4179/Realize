@@ -1,8 +1,11 @@
 class Realize:
-    def __init__(self, file):
+    def __init__(self, file_name, file):
+        new_file_name = remove_path(file_name)
+        self.base_file_name = new_file_name
         self.data_arr = file.copy()
-        self.imported_files_dict = {}
-        self.classes_dict = {}
+        self.imported_files_dict = {} #{"file_name":"what to import"}
+        self.file_classes_dict = {}
+        self.classes_dict = {} #{"name":[line_number,class_obj]}
 
     def find_import_statements(self):
         data = self.data_arr
@@ -18,9 +21,8 @@ class Realize:
     def find_import_names(self):
         #Scans through import statements to find what classes to import and files
         #to import from.
-        #Adds information to self.file_imports dict {"file_name":"class_name"}
+        #Adds information to self.imported_files_dict {"file_name":"class_name"}
         list_of_imports = self.find_import_statements()
-        self.import_file_names = {}
         for item in list_of_imports:
             index_of_from = item.find("from ")
             index_of_import = item.find("import ")
@@ -33,18 +35,21 @@ class Realize:
             
                 file_index = index_of_from + from_length
                 file_name = item[file_index:index_of_import]
-                #print(name_of_class, "in from first. File:",file_name)
-            elif index_of_from == -1:
+            else:
                 name_of_class = "*"
                 file_name = item[import_length:item_length+1]
-                #print(name_of_class,"in no from. File:",file_name)
+            if file_name in self.imported_files_dict:
+                self.imported_files_dict[file_name].append(name_of_class)
             else:
-                name_of_class = item[import_length:index_of_from-1]
-            
-                file_index = index_of_from + from_length
-                file_name = item[file_index:item_length+1]
-                #print(name_of_class, "in import first. File:",file_name)
-            self.imported_files_dict[file_name] = name_of_class
+                self.imported_files_dict[file_name] = [name_of_class]
+
+        iter_hash = iter(self.classes_dict)
+        keys = []
+        for i in range(0,len(self.classes_dict)):
+            keys.append(next(iter_hash))
+
+        self.imported_files_dict[self.base_file_name] = keys
+        print(self.imported_files_dict)
 
 
     def get_dict(self):
@@ -61,7 +66,6 @@ class Realize:
         data = self.data_arr
         for line in data:
             if line.lstrip()[0:6] == "class ":
-                #print(line_number, line)
                 class_name = line.strip()[6:-1]
                 self.add_class(class_name, line_number)
             line_number += 1
@@ -79,13 +83,11 @@ class Class_obj:
 
     #Unfinished
     def find_methods(self): 
-        #print(self.class_name)
         index = self.start_line_number
         for line in self.class_lines:
             if line.strip()[0:4] == "def ":
                 parentheses = line.strip().index("(")
                 self.method_calls[line.strip()[4:parentheses]] = []
-                #print(self.method_calls)
 
     #Unfinished
     def find_class_instances(self):
@@ -135,5 +137,16 @@ class Class_obj:
             indent_level, line_type = self.check_indent(file[line_number-1], indent_level)
         else:
             line_number -= 1
-            #print("Ends at line number: ",line_number)
         return line_number
+
+def remove_path(name):
+    name+=" "
+    slash = name.find('/')+1
+    checker = 0
+    while slash != checker:
+        checker = slash
+        slicer = name[slash:-1]
+        slash += slicer.find('/')+1
+    dot = slicer.find('.')
+    file_name = slicer[0:dot]
+    return file_name
