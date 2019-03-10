@@ -23,11 +23,10 @@ class Gui_class():
         self.left_frame.grid(column=0,row=0,sticky="nsew")
         self.right_frame.grid(column=1,row=0,sticky="nsew")
 
-        self.class_name_label = Label(self.left_frame, text="")
-        self.class_file_label = Label(self.left_frame, text="")
-        self.class_line_label = Label(self.left_frame, text="")
-        self.class_methods_label = Label(self.left_frame, text="")
-
+        self.class_name_label = Label(self.left_frame, text=None)
+        self.class_file_label = Label(self.left_frame, text=None)
+        self.class_line_label = Label(self.left_frame, text=None)
+        self.class_methods_label = Label(self.left_frame, text=None)
 
     def header(self):
         #Menu header
@@ -96,18 +95,14 @@ class Gui_class():
         class_exists = False
         name_of_class = self.entry.get()
 
-        if self.class_name_label != None:
-            self.class_name_label.destroy()
-            self.class_file_label.destroy()
-            self.class_line_label.destroy()
-            self.class_methods_label.destroy()
+        self.reset_display_labels()
 
         for item in self.realize_classes:
             if item == name_of_class:
                 class_exists = True
         if class_exists:
             obj = self.realize.classes_dict[name_of_class]
-            self.class_name_label = Label(frame, text="Class name:"+obj[1].class_name)
+            self.class_name_label = Label(frame, text="Class name: "+obj[1].class_name)
             self.class_line_label = Label(frame, text="Line: "+str(obj[0]))
             self.class_file_label = Label(frame, text="")
             for files in self.realize.imported_files_dict:
@@ -125,6 +120,18 @@ class Gui_class():
         self.class_line_label.pack()
         self.class_methods_label.pack()
 
+
+    def reset_display_labels(self):
+        if self.class_name_label != None:
+            self.class_name_label.destroy()
+            self.class_file_label.destroy()
+            self.class_line_label.destroy()
+            self.class_methods_label.destroy()
+        
+        self.class_name_label = Label(self.left_frame, text="")
+        self.class_file_label = Label(self.left_frame, text="")
+        self.class_line_label = Label(self.left_frame, text="")
+        self.class_methods_label = Label(self.left_frame, text="")
 
     def run(self):
         self.main_frames()
