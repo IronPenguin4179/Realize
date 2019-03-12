@@ -70,6 +70,20 @@ class Realize:
                 self.add_class(class_name, line_number)
             line_number += 1
 
+    def clean_up_imports(self):
+        for item in self.imported_files_dict:
+            for thing in self.imported_files_dict[item]:
+                comma = thing.find(',')
+                asterisk = thing.find('*')
+                if comma != -1:
+                    while comma != -1:
+                        self.imported_files_dict[item].append(thing[0:comma])
+                        thing = thing[comma+1:].strip()
+                        comma = thing.find(',')
+                    self.imported_files_dict[item][0] = thing
+                if asterisk != -1:
+                    self.imported_files_dict[item][0] = "asterisk"
+        print(self.imported_files_dict)
 
 class Class_obj:
     def __init__(self, name, start_line_number, file):
@@ -150,3 +164,25 @@ def remove_path(name):
     dot = slicer.find('.')
     file_name = slicer[0:dot]
     return file_name
+
+def remove_file_whitelines(file):
+    f = file.readlines()
+    file_no_wht = []
+    for line in f:
+        if not line.isspace():
+            file_no_wht.append(line)
+    return file_no_wht
+
+with open('example_files/example.py','r') as f:
+    filey = remove_file_whitelines(f)
+realizey = Realize('example_files/example.py',filey)
+realizey.find_classes(filey)
+realizey.find_import_names()
+for classy in realizey.classes_dict:
+    realizey.classes_dict[classy][1].find_methods()
+    realizey.classes_dict[classy][1].find_class_instances()
+for filey in realizey.imported_files_dict:
+    with open('example_files/'+filey.rstrip()+'.py') as f:
+        f_no_wht = remove_file_whitelines(f)
+        realizey.find_classes(f_no_wht)
+realizey.clean_up_imports()
