@@ -81,13 +81,16 @@ class Gui_class():
 
     def realize_file(self, file_name):
         self.realize = Realize(file_name, self.file)
-        self.realize.find_classes()
+        self.realize.find_classes(self.file)
         self.realize.find_import_names()
         for classy in self.realize.classes_dict:
             self.realize.classes_dict[classy][1].find_methods()
             self.realize.classes_dict[classy][1].find_class_instances()
-        for imps in self.realize.imported_files_dict:
-            print(imps)
+        for filey in self.realize.imported_files_dict:
+            with open('example_files/'+filey.rstrip()+'.py') as f:
+                f_no_wht = remove_file_whitelines(f)
+                self.realize.find_classes(f_no_wht)
+        print(self.realize.classes_dict)
         self.realize_classes = self.realize.classes_dict
 
     def displayClassInfo(self):
@@ -104,10 +107,9 @@ class Gui_class():
             obj = self.realize.classes_dict[name_of_class]
             self.class_name_label = Label(frame, text="Class name: "+obj[1].class_name)
             self.class_line_label = Label(frame, text="Line: "+str(obj[0]))
-            self.class_file_label = Label(frame, text="")
             for files in self.realize.imported_files_dict:
-                print(files)
                 for classes in self.realize.imported_files_dict[files]:
+                    print(classes)
                     if classes == name_of_class:
                         self.class_file_label = Label(frame, text="File: "+files)
             self.class_methods_label = Label(frame, text="Methods: "+str(obj[1].method_calls))

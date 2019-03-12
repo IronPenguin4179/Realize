@@ -21,7 +21,7 @@ class Realize:
     def find_import_names(self):
         #Scans through import statements to find what classes to import and files
         #to import from.
-        #Adds information to self.imported_files_dict {"file_name":"class_name"}
+        #Adds information to self.imported_files_dict {"file_name":["class_name"]}
         list_of_imports = self.find_import_statements()
         for item in list_of_imports:
             index_of_from = item.find("from ")
@@ -38,6 +38,7 @@ class Realize:
             else:
                 name_of_class = "*"
                 file_name = item[import_length:item_length+1]
+
             if file_name in self.imported_files_dict:
                 self.imported_files_dict[file_name].append(name_of_class)
             else:
@@ -61,10 +62,9 @@ class Realize:
 
     #Scans the file to find where the class declarations are, make them a class_object,
     #add it to the classes dictionary and record the index in realize.
-    def find_classes(self):
+    def find_classes(self,file_arr):
         line_number = 1
-        data = self.data_arr
-        for line in data:
+        for line in file_arr:
             if line.lstrip()[0:6] == "class ":
                 class_name = line.strip()[6:-1]
                 self.add_class(class_name, line_number)
