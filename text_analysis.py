@@ -85,21 +85,23 @@ class Realize:
     def clean_up_imports(self):
         for file in self.imported_files_dict:
             for classy in self.imported_files_dict[file]:
+                classy = classy.capitalize()
                 comma = classy.find(',')
                 asterisk = classy.find('*')
                 if comma != -1:
                     while comma != -1:
                         self.imported_files_dict[file].append(classy[0:comma])
-                        classy = classy[comma+1:].strip()
+                        classy = classy[comma+1:].capitalize().strip()
                         comma = classy.find(',')
-                    self.imported_files_dict[file][0] = classy
+                    self.imported_files_dict[file][0] = classy.capitalize()
                 elif asterisk != -1:
                     arr = []
                     for classes in self.classes_dict:
                         for attr in self.classes_dict[classes]:
                             if attr == file:
-                                arr.append(classes)
+                                arr.append(classes.capitalize())
                             self.imported_files_dict[file] = arr
+        print(self.imported_files_dict)
 
 class Class_obj:
     def __init__(self, name, start_line_number, file):
@@ -181,7 +183,7 @@ def remove_path(name):
     file_name = slicer[0:dot]
     return file_name
 
-realizey = Realize('example_files/example.py')
+""" realizey = Realize('example_files/example.py')
 realizey.find_classes('example_files/example.py')
 realizey.find_import_names()
 for classy in realizey.classes_dict:
@@ -189,4 +191,4 @@ for classy in realizey.classes_dict:
     realizey.classes_dict[classy][1].find_class_instances()
 for filey in realizey.imported_files_dict:
     realizey.find_classes('example_files/'+filey.rstrip()+'.py')
-realizey.clean_up_imports()
+realizey.clean_up_imports() """

@@ -1,4 +1,3 @@
-#Display class info to show file name
 from os import path
 from tkinter import *
 from tkinter import filedialog
@@ -80,17 +79,15 @@ class Gui_class():
         self.realize_file(file_pick)
 
     def realize_file(self, file_name):
-        self.realize = Realize(file_name, self.file)
-        self.realize.find_classes(self.file)
+        self.realize = Realize(file_name)
+        self.realize.find_classes(file_name)
         self.realize.find_import_names()
         for classy in self.realize.classes_dict:
             self.realize.classes_dict[classy][1].find_methods()
             self.realize.classes_dict[classy][1].find_class_instances()
         for filey in self.realize.imported_files_dict:
-            with open('example_files/'+filey.rstrip()+'.py') as f:
-                f_no_wht = remove_file_whitelines(f)
-                self.realize.find_classes(f_no_wht)
-        print(self.realize.classes_dict)
+            self.realize.find_classes('example_files/'+filey.rstrip()+'.py')
+        self.realize.clean_up_imports()
         self.realize_classes = self.realize.classes_dict
 
     def displayClassInfo(self):
@@ -100,11 +97,13 @@ class Gui_class():
 
         self.reset_display_labels()
 
-        for item in self.realize_classes:
-            if item == name_of_class:
-                class_exists = True
+        for filey in self.realize.imported_files_dict:
+            for item in self.realize.imported_files_dict[filey]:
+                if item == name_of_class:
+                    class_exists = True
+                    print("This class exists: "+item)
         if class_exists:
-            obj = self.realize.classes_dict[name_of_class]
+            obj = self.realize.classes_dict[name_of_class.capitalize()]
             self.class_name_label = Label(frame, text="Class name: "+obj[1].class_name)
             self.class_line_label = Label(frame, text="Line: "+str(obj[0]))
             for files in self.realize.imported_files_dict:
