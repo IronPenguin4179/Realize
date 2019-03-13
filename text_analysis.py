@@ -1,8 +1,9 @@
 class Realize:
-    def __init__(self, file_name, file):
+    def __init__(self, file_name):
         new_file_name = remove_path(file_name)
+        with open(file_name,'r') as f:
+            self.data_arr = self.remove_file_whitelines(f)
         self.base_file_name = new_file_name
-        self.data_arr = file.copy()
         self.imported_files_dict = {} #{"file_name":"what to import"}
         self.file_classes_dict = {}
         self.classes_dict = {} #{"name":[line_number,class_obj]}
@@ -21,7 +22,7 @@ class Realize:
     def find_import_names(self):
         #Scans through import statements to find what classes to import and files
         #to import from.
-        #Adds information to self.imported_files_dict {"file_name":"class_name"}
+        #Adds information to self.imported_files_dict {"file_name":["class_name"]}
         list_of_imports = self.find_import_statements()
         for item in list_of_imports:
             index_of_from = item.find("from ")
@@ -38,6 +39,7 @@ class Realize:
             else:
                 name_of_class = "*"
                 file_name = item[import_length:item_length+1]
+
             if file_name in self.imported_files_dict:
                 self.imported_files_dict[file_name].append(name_of_class)
             else:
@@ -55,21 +57,51 @@ class Realize:
     def get_dict(self):
         return self.classes_dict
 
-    def add_class(self, class_name, line_number):
+    def add_class(self, class_name, line_number, file_name):
         class_obj = Class_obj(class_name, line_number, self.data_arr)
-        self.classes_dict[class_name] = [line_number, class_obj]
+        self.classes_dict[class_name] = [line_number, class_obj, file_name]
+
+    def remove_file_whitelines(self, file):
+        f = file.readlines()
+        file_no_wht = []
+        for line in f:
+            if not line.isspace():
+                file_no_wht.append(line)
+        return file_no_wht
 
     #Scans the file to find where the class declarations are, make them a class_object,
     #add it to the classes dictionary and record the index in realize.
-    def find_classes(self):
+    def find_classes(self,file_name):
+        with open(file_name,'r') as f:
+            file_arr = self.remove_file_whitelines(f)
+        new_name = remove_path(file_name)
         line_number = 1
-        data = self.data_arr
-        for line in data:
+        for line in file_arr:
             if line.lstrip()[0:6] == "class ":
                 class_name = line.strip()[6:-1]
-                self.add_class(class_name, line_number)
+                self.add_class(class_name, line_number, new_name)
             line_number += 1
 
+    def clean_up_imports(self):
+        for file in self.imported_files_dict:
+            for classy in self.imported_files_dict[file]:
+                classy = classy.capitalize()
+                comma = classy.find(',')
+                asterisk = classy.find('*')
+                if comma != -1:
+                    while comma != -1:
+                        self.imported_files_dict[file].append(classy[0:comma])
+                        classy = classy[comma+1:].capitalize().strip()
+                        comma = classy.find(',')
+                    self.imported_files_dict[file][0] = classy.capitalize()
+                elif asterisk != -1:
+                    arr = []
+                    for classes in self.classes_dict:
+                        for attr in self.classes_dict[classes]:
+                            if attr == file:
+                                arr.append(classes.capitalize())
+                            self.imported_files_dict[file] = arr
+        print(self.imported_files_dict)
 
 class Class_obj:
     def __init__(self, name, start_line_number, file):
@@ -150,3 +182,13 @@ def remove_path(name):
     dot = slicer.find('.')
     file_name = slicer[0:dot]
     return file_name
+
+""" realizey = Realize('example_files/example.py')
+realizey.find_classes('example_files/example.py')
+realizey.find_import_names()
+for classy in realizey.classes_dict:
+    realizey.classes_dict[classy][1].find_methods()
+    realizey.classes_dict[classy][1].find_class_instances()
+for filey in realizey.imported_files_dict:
+    realizey.find_classes('example_files/'+filey.rstrip()+'.py')
+realizey.clean_up_imports() """

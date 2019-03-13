@@ -1,8 +1,8 @@
-class one:
+class One:
     pass
 
-class two:
+class Two:
     pass
 
-class three:
+class Three:
     pass
