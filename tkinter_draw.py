@@ -72,21 +72,24 @@ class Gui_class():
         print("Hello")
 
     def filePicker(self):
-        file_pick = filedialog.askopenfilename(initialdir= path.dirname(__file__))
+        self.file_pick = filedialog.askopenfilename(initialdir= path.dirname(__file__))
         
-        with open(file_pick, 'r') as f:
+        with open(self.file_pick, 'r') as f:
             self.file = remove_file_whitelines(f)
-        self.realize_file(file_pick)
+        self.realize_file()
 
-    def realize_file(self, file_name):
-        self.realize = Realize(file_name)
-        self.realize.find_classes(file_name)
+    def realize_file(self):
+        self.realize = Realize(self.file_pick)
+        self.realize.find_classes(self.file_pick)
         self.realize.find_import_names()
         for classy in self.realize.classes_dict:
+            print(classy)
             self.realize.classes_dict[classy][1].find_methods()
             self.realize.classes_dict[classy][1].find_class_instances()
         for filey in self.realize.imported_files_dict:
-            self.realize.find_classes('example_files/'+filey.rstrip()+'.py')
+            index = len(self.file_pick)-len(self.realize.base_file_name)-3
+            new_path = self.file_pick[0:index]+filey.rstrip()+'.py'
+            self.realize.find_classes(new_path)
         self.realize.clean_up_imports()
         self.realize_classes = self.realize.classes_dict
 
@@ -94,7 +97,6 @@ class Gui_class():
         frame = self.left_frame
         class_exists = False
         name_of_class = self.entry.get()
-
         self.reset_display_labels()
 
         for filey in self.realize.imported_files_dict:

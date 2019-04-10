@@ -1,10 +1,9 @@
-# Realize
+#Realize
 Realize is a python based program that allows the user to search for classes throughout a program and find out info about them.
 
 #Instructions
-Put the program you want info on in the Example Files folder and run tkinterDraw. A window will appear. Open your main file.
-The search bar may be used to find out info on any class throughtout the program and any files it imports from except base python
-libraries. 
+Run main.py. A window will appear. Open your example.py in the example folder. The search bar may be used to find out info on any class throughtout the program and any files it imports from except base python
+libraries.
 
 #Caveats
 May only be used for python files
