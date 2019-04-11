@@ -58,10 +58,12 @@ class Gui_class():
         #Entry bar and find button
         self.entry = Entry(frame)
         self.entry.pack()
-        self.find_it_button = Button(frame,text="Find it!",command=self.displayClassInfo)
+        self.find_it_button = Button(frame,text="Find it!",
+                                     command=self.displayClassInfo)
         self.find_it_button.pack()
 
     def showClasses(self):
+        """Displays class names in main panel."""
         i = 1
         for classy in self.realize_classes:
             self.class_label = Label(self.left_frame,text=classy)
@@ -72,13 +74,16 @@ class Gui_class():
         print("Hello")
 
     def filePicker(self):
-        self.file_pick = filedialog.askopenfilename(initialdir= path.dirname(__file__))
+        """Opens up file picking window."""
+        self.file_pick = filedialog.askopenfilename(
+                initialdir= path.dirname(__file__))
         
         with open(self.file_pick, 'r') as f:
             self.file = remove_file_whitelines(f)
         self.realize_file()
 
     def realize_file(self):
+        """Uses Realize to scan selected document."""
         self.realize = Realize(self.file_pick)
         self.realize.find_classes(self.file_pick)
         self.realize.find_import_names()
@@ -94,6 +99,7 @@ class Gui_class():
         self.realize_classes = self.realize.classes_dict
 
     def displayClassInfo(self):
+        """Displays info on searched for class."""
         frame = self.left_frame
         class_exists = False
         name_of_class = self.entry.get()
@@ -106,13 +112,15 @@ class Gui_class():
                     print("This class exists: "+item)
         if class_exists:
             obj = self.realize.classes_dict[name_of_class.capitalize()]
-            self.class_name_label = Label(frame, text="Class name: "+obj[1].class_name)
+            self.class_name_label = Label(
+                    frame, text="Class name: "+obj[1].class_name)
             self.class_line_label = Label(frame, text="Line: "+str(obj[0]))
             for files in self.realize.imported_files_dict:
                 for classes in self.realize.imported_files_dict[files]:
                     if classes == name_of_class:
                         self.class_file_label = Label(frame, text="File: "+files)
-            self.class_methods_label = Label(frame, text="Methods: "+str(obj[1].method_calls))
+            self.class_methods_label = Label(frame,
+                    text="Methods: "+str(obj[1].method_calls))
         else:
             self.class_name_label = Label(frame, text="Entry not found.")
             self.class_line_label = Label(frame, text="")
@@ -124,6 +132,7 @@ class Gui_class():
 
 
     def reset_display_labels(self):
+        """Refresh main panel."""
         if self.class_name_label != None:
             self.class_name_label.destroy()
             self.class_file_label.destroy()
@@ -136,11 +145,13 @@ class Gui_class():
         self.class_methods_label = Label(self.left_frame, text="")
 
     def run(self):
+        """Runs tkinter widgets."""
         self.main_frames()
         self.header()
         self.sidebar()
 
 def remove_file_whitelines(file):
+    """Removes white lines from file."""
     f = file.readlines()
     file_no_wht = []
     for line in f:
