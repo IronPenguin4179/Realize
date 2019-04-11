@@ -10,6 +10,7 @@ class Realize:
         self.classes_dict = {} #{"name":[line_number,class_obj]}
 
     def find_import_statements(self):
+        """Iterates through file to find and save import statements."""
         data = self.data_arr
         imports = []
         for line in data:
@@ -21,9 +22,9 @@ class Realize:
         return imports
 
     def find_import_names(self):
-        #Scans through import statements to find what classes to import and files
-        #to import from.
-        #Adds information to self.imported_files_dict {"file_name":["class_name"]}
+        """Scans through import statements to find what classes to import and
+        files to import from. Adds information to 
+        self.imported_files_dict {"file_name":["class_name"]}"""
         list_of_imports = self.find_import_statements()
         for item in list_of_imports:
             index_of_from = item.find("from ")
@@ -57,10 +58,12 @@ class Realize:
         return self.classes_dict
 
     def add_class(self, class_name, line_number, file_name):
+        """Creates class obj and stores it in classes_dict."""
         class_obj = Class_obj(class_name, line_number, self.data_arr)
         self.classes_dict[class_name] = [line_number, class_obj, file_name]
 
     def remove_file_whitelines(self, file):
+        """Remove blank lines from the file"""
         f = file.readlines()
         file_no_wht = []
         for line in f:
@@ -68,9 +71,10 @@ class Realize:
                 file_no_wht.append(line)
         return file_no_wht
 
-    #Scans the file to find where the class declarations are, make them a class_object,
-    #add it to the classes dictionary and record the index in realize.
     def find_classes(self,file_name):
+        """Scans the file to find where the class declarations are, make them
+        a class_object, add it to the classes dictionary and record the index
+        in realize."""
         with open(file_name,'r') as f:
             file_arr = self.remove_file_whitelines(f)
         new_name = remove_path(file_name)
@@ -103,16 +107,23 @@ class Realize:
 
 class Class_obj:
     def __init__(self, name, start_line_number, file):
+        """Designed to store and analyze info on class."""
         self.class_name = name
         self.data = file.copy()
         self.start_line_number = start_line_number
-        self.end_line_number = self.find_last_line(self.data, start_line_number)
-        self.class_lines = self.data[self.start_line_number:self.end_line_number]
-        self.method_calls = {} #Format { "method_name":[[line_called, instance_name]] }
-        self.class_instances = {} #Format { "instance_name":line_created}
+        self.end_line_number = self.find_last_line(self.data, 
+                                                   start_line_number)
+        self.class_lines = self.data[
+                self.start_line_number:self.end_line_number]
+        #Format { "method_name":[[line_called, instance_name]] }
+        self.method_calls = {}
+        #Format { "instance_name":line_created}
+        self.class_instances = {} 
 
     #Unfinished
-    def find_methods(self): 
+    def find_methods(self):
+        """Iterates through code lines to find method declaration
+        statements."""
         index = self.start_line_number
         for line in self.class_lines:
             if line.strip()[0:4] == "def ":
@@ -121,18 +132,20 @@ class Class_obj:
 
     #Unfinished
     def find_class_instances(self):
+        """Iterates through code lines to find class instantiations."""
         line_number = 1
         data = self.data
         for line in data:
-            if line.find(self.class_name) != -1 and line.lstrip()[0:6] != "class ":
+            if line.find(self.class_name) != -1 and 
+               line.lstrip()[0:6] != "class ":
                 print("Instance found at",line_number)
             line_number += 1
 
-
-    #Takes a line and the last line's indent level and outputs line type and it's indent level.
-    #Used for finding if a line is part of a previous class/function or starting other component.
     @staticmethod
     def check_indent(line, previous_indent_level=0):
+        """Takes a line and the last line's indent level and outputs line type
+        and it's indent level. Used for finding if a line is part of a
+        previous class/function or starting other component."""
         line_type = None
         left_spaces = len(line.rstrip())-len(line.strip())
         indent_level = int(left_spaces/4)
@@ -158,6 +171,9 @@ class Class_obj:
     #Takes array of lines from file and the line number where the class begins.
     #Returns the number of the last line in the class
     def find_last_line(self, file, start_line_number):
+        """Iterates through lines in file to find where class ends.Takes array
+        of lines from file and the line number where the class begins. Returns
+        the number of the last line in the class"""
         line_number = start_line_number-1
         start_indent_level = self.check_indent(file[line_number])#line number is index+1
         indent_level = 0
@@ -170,6 +186,7 @@ class Class_obj:
         return line_number
 
 def remove_path(name):
+    """Takes a path statement, and removes the path to obtain file name."""
     name+=" "
     slash = name.find('/')+1
     checker = 0
