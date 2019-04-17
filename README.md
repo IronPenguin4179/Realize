@@ -1,3 +1,6 @@
+[![made-with-python](https://img.shields.io/badge/Made%20with-Python-1f425f.svg)](https://www.python.org/) 
+[![style](https://img.shields.io/badge/Style-PEP8-brightgreen.svg)](https://www.python.org/dev/peps/pep-0008/)
+
 # Realize
 Realize is a completely Python program designed to scan through a project and all its non standard lib imports to find class names, locations, and methods.
 
